@@ -1,0 +1,7 @@
+{
+  "django.snippets.exclude": ["cms", "wagtail"],
+  "[django-html]": {
+    "editor.defaultFoldingRangeProvider": "vscode.html-language-features",
+    "editor.defaultFormatter": "vscode.html-language-features"
+  }
+}
