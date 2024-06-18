@@ -1,15 +1,15 @@
 from typing import Iterable
 from django.db import models
 from django.utils.text import slugify
-from django.contrib import admin
+from django.conf import settings
 
 class Author(models.Model):
-    name = models.CharField(max_length=255)
+    user = models.OneToOneField(to=settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True)
     company = models.CharField(max_length=255)
     designation = models.CharField(max_length=255)
 
     def __str__(self) -> str:
-        return self.name
+        return f'{self.user.first_name} {self.user.last_name}'
     
 class Skills(models.Model):
     name = models.CharField(max_length=255)
@@ -22,7 +22,7 @@ class JobPost(models.Model):
     slug = models.SlugField(null=True,blank=True,max_length=40,unique=True)
     description = models.CharField(max_length=255)
     skills = models.ManyToManyField(to=Skills)
-    location = models.OneToOneField(to='Location',on_delete=models.CASCADE,null=True)
+    location = models.ForeignKey(to='Location',on_delete=models.CASCADE,null=True)
     date = models.DateTimeField(auto_now_add=True)
     salary = models.IntegerField()
     application_deadline = models.DateField(null=True,blank=True)
@@ -50,6 +50,18 @@ class Location(models.Model):
 
     def __str__(self) -> str:
         return f'{self.city} - {self.state}'
+
+
+class JobApplication(models.Model):
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    job_post = models.ForeignKey(to=JobPost,on_delete=models.CASCADE,related_name="applications")
+    education = models.TextField()
+    skills = models.ManyToManyField(to=Skills)
+    available_to_start = models.DateField(null=True)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    resume = models.FileField(upload_to="jobmanager/applications")
     
     
 

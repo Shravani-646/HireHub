@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.db.models.aggregates import Count
 from django.http import HttpRequest
-from jobmanager.models import Author, JobPost,Location, Skills
+from jobmanager.models import Author, JobApplication, JobPost,Location, Skills
 # Register your models here.
 
 @admin.register(JobPost)
@@ -31,11 +31,15 @@ class JobPostAdmin(admin.ModelAdmin):
      
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ["id","name","company","jobs_posted_count"]
+    list_display = ["id","fullname","company","jobs_posted_count"]
     search_fields = ["name"]
+    autocomplete_fields = ["user"]
 
     def jobs_posted_count(self,author):
         return author.jobpost_set.count()
+    
+    def fullname(self,author):
+        return f'{author.user.first_name} {author.user.last_name}'
     
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
@@ -47,6 +51,11 @@ class LocationAdmin(admin.ModelAdmin):
 class SkillAdmin(admin.ModelAdmin):
     list_display = ["name"]
     search_fields = ["name"]
+
+@admin.register(JobApplication)
+class JobApplicationAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["user","job_post","skills"]
+    list_display = ["id","job_post","user"]
 
 
      
