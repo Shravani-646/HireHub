@@ -14,7 +14,7 @@ def register_page(request):
         if form.is_valid():
             form.save()
             messages.success(request,f"Account was created for {form.cleaned_data.get('username')}")
-            return redirect("login-page")
+            return redirect("core:login-page")
     context = {'form':form}
     return render(request,template_name="core/register.html",context=context)
 

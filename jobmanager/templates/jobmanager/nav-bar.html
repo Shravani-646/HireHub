@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+    {% block title %}
     <title>Job List</title>
+    {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
@@ -25,34 +27,41 @@
               <a class="nav-link" href="{% url 'core:login-page'%}">Login</a>
             </li>
             <li class="nav-item dropdown">
+              {% if request.user.is_authenticated %}
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Profile
               </a>
               
               <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">View Profile</a></li>
-              {% if is_author %}
-                <li><a class="dropdown-item" href="#">Posted Jobs</a></li>
+              <li><a class="dropdown-item" href="{% url 'jobmanager:profile-page' id=user.id %}">View Profile</a></li>
+              {% if author %}
+                <li><a class="dropdown-item" href="{% url 'jobmanager:posted-jobs' id=author.id %}">Posted Jobs</a></li>
               {% endif %}
                 <li><a class="dropdown-item" href="{%url 'core:logout-page' %}">Logout</a></li>
                 <li><hr class="dropdown-divider"></li>
               </ul>
+              {% endif %}
             </li>
             <li class="nav-item">
               <a class="nav-link" aria-disabled="true" href="{%url 'core:signup-page'%}">Signup</a>
             </li>
+            {% if not author %}
+            <li class="nav-item">
+              <a class="nav-link" aria-disabled="true" href="{%url 'jobmanager:author-page'%}">Post a Job</a>
+            </li>
+            {% endif %}
           </ul>
           {% if request.user.is_authenticated %}
               <p class="fw-bold fw-bolder m-3">Welcome {{request.user.first_name}}</p>
             {% endif %}
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <form class="d-flex" role="search" method="post">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" placeholder="Search by city and title" name="search-keywords" aria-label="Search" value={{search_keyword}}>
             <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
         </div>
       </div>
     </nav>
-    
       {% block content %}
        {% endblock %}
   </body>

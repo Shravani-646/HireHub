@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'jobmanager',
     'subscribe',
     'core',
+    'dal',
+    'dal_select2',
+    'dal_queryset_sequence',
+     'queryset_sequence',
 ]
 
 MIDDLEWARE = [

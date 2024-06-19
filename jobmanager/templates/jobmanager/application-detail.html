@@ -1,0 +1,21 @@
+{% extends "jobmanager/nav-bar.html" %}
+{%block title %}
+<title>Application Detail</title>
+{%endblock%}
+    {% block content %}
+    <h1>Applied by {{application.user.first_name}}</h1>
+    <div class="card" style="width: 25rem; margin: 10px; padding:10px">
+      <h5 class="card-title">{{application.user.first_name}} {{application.user.last_name}}</h5>
+      <div class="card-body">{{application.education}}</div>
+      <p class="card-text">{{application.city}}</p>
+      <p class="card-text">{{application.state}}</p>
+      <p class="card-text">Skills:</p>
+      <ul>
+        {% for skill in skills %}
+        <li>{{ skill.name }}</li>
+        {% endfor %}
+      </ul>
+      <p class="card-text"><a href="/media/{{application.resume}}" target="_blank">Resume</a></p>
+    </div>
+    {%endblock%}
+  

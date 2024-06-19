@@ -1,0 +1,40 @@
+{% extends "jobmanager/nav-bar.html" %}
+{%block title %}
+<title>Applications List</title>
+{%endblock%}
+{% block content %}
+<div>
+      <h3>The Job is posted by {{author.user.first_name}}</h3>
+      <table class="table position-absolute">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Full Name</th>
+            <th scope="col">Available To Start</th>
+            <th scope="col">City</th>
+            <th scope="col">All Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for application in applications%}
+          <tr>
+            <th scope="row">{{application.user.first_name}} {{application.user.last_name}}</th>
+            <td>{{application.available_to_start}}</td>
+            <td>{{application.city}}</td>
+            <td>
+              <a
+                style="text-decoration: none;"
+                href="{% url 'jobmanager:application-detail' id=application.id%}"
+                <button
+                  type="button"
+                  class="btn btn-info"
+                >
+                  Details
+                </button>
+                </a
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}

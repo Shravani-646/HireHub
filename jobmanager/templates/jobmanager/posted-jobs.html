@@ -1,10 +1,11 @@
 {% extends "jobmanager/nav-bar.html" %}
-{%block title %}
-<title>Job List Page</title>
-{%endblock%}
+{% block title %}
+<title>Posted Jobs List</title>
+{% endblock%}
 {% block content %}
 <div>
-      <h3>Latest Job Posts</h3>
+      <h3 class="d-inline">Jobs Posted by {{author.user.first_name}}</h3>
+      <a type="button" class="btn btn-primary m-2" href="{%url 'jobmanager:job-post' id=author.id%}">Create</a>
       <table class="table position-absolute">
         <thead class="thead-dark">
           <tr>
@@ -15,7 +16,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for job in jobs%}
+          {% for job in posts%}
           <tr>
             <th scope="row">{{job.title}}</th>
             <td>{{job.author.company}}</td>
@@ -23,7 +24,7 @@
             <td>
               <a
                 style="text-decoration: none;"
-                href="{% url 'jobmanager:job-detail' id=job.id %}"
+                href="{% url 'jobmanager:applications-list' id=job.id %}"
                 target="_blank"
                 <button
                   type="button"
