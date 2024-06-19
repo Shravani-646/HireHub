@@ -19,7 +19,7 @@ class Skills(models.Model):
 # Create your models here.
 class JobPost(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(null=True,blank=True,max_length=40,unique=True)
+    slug = models.SlugField(null=True,blank=True,max_length=40)
     description = models.CharField(max_length=255)
     skills = models.ManyToManyField(to=Skills)
     location = models.ForeignKey(to='Location',on_delete=models.CASCADE,null=True)

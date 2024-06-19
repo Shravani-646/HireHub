@@ -32,11 +32,17 @@
                 >
                   View
                 </button>
-                </a
+              </a>
+              <a href="{% url 'jobmanager:delete-job-post' id=author.id jobpost_id=job.id %}">
+                <button type="button" class="btn btn-danger">Delete</button>
+            </a>
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+    {% for message in messages %}
+      <p class="text-success link-underline-success">{{message}}</p>
+    {% endfor %}
 {% endblock %}

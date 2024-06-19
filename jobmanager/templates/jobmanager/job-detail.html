@@ -3,9 +3,13 @@
 <title>Job Details Page</title>
 {%endblock%}
     {% block content %}
-    <h1>This is job details page</h1>
-    <div class="card" style="width: 18rem; margin-left: 10px">
-      <div class="card-body"></div>
+    {% for message in messages %}
+<p class="text-success link-underline-success">{{message}}</p>
+{% endfor %}
+    <div class="d-flex flex-column justify-content-center align-items-center">
+    <h1>Job Details page</h1>
+    <div class="card" style="width: 18rem; padding:10px">
+      <div class="card-body p-2"></div>
       <h5 class="card-title">{{job.title}}</h5>
       <h6 class="card-subtitle mb-2 text-muted">{{job.company}}</h6>
       <p class="card-text">{{job.description}}</p>
@@ -18,5 +22,7 @@
       </ul>
     </div>
     <a type="submit" class="btn btn-primary m-3" href="{% url 'jobmanager:job-application' id=job.id %}">Apply</a>
+  </div>
+  
     {%endblock%}
   

@@ -23,9 +23,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("",include("jobmanager.urls",namespace='jobmanager'),),
-    path("",include("subscribe.urls")),
+    path("",include("subscribe.urls",namespace="subscribe")),
     path("",include("core.urls",namespace='core'),),
-]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

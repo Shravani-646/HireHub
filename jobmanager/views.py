@@ -1,5 +1,6 @@
 from datetime import datetime
-from django.shortcuts import render,HttpResponse,redirect
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, render,HttpResponse,redirect
 from jobmanager.forms import AuthorForm, JobPostForm
 from jobmanager.models import JobPost,JobApplication,Skills,Author,Location
 from django.contrib.auth.decorators import login_required
@@ -15,7 +16,6 @@ def home_page(request):
     if request.method == "POST":
         keyword = request.POST.get("search-keywords")
         jobs = JobPost.objects.select_related("location").filter(location__city__icontains=keyword).all()
-        print(jobs)
         if not jobs.exists():
             jobs = JobPost.objects.filter(title__icontains=keyword)
         return render(request, 'jobmanager/job-list.html', {'jobs': jobs, 'search_keyword': keyword, 'author': author})
@@ -34,13 +34,14 @@ def job_detail(request,id):
     
 @login_required(login_url="core:login-page")
 def job_application(request,id):
-    application_exists = JobApplication.objects.filter(user=request.user).exists()
+    application_exists = JobApplication.objects.filter(job_post__id=id,user=request.user).exists()
     if not application_exists:
         if request.method=="POST":
             skills_data = request.POST.get("skills").split(",")
             skills = [Skills.objects.get_or_create(name=name.strip())[0] for name in skills_data]
             job_application = get_application_data(request_obj=request,id=id)
             job_application.skills.set(skills)
+            messages.success(request,"We submited your application")
             return redirect("jobmanager:job-detail",id=id)
         return render(request,"jobmanager/create-application.html",{'user':request.user})
     else:
@@ -53,6 +54,7 @@ def get_application_data(request_obj,id):
     available_to_start = datetime.strptime(available_to_start_str, '%m-%d-%Y').date()
     job_post = JobPost.objects.get(id=id)
     resume_file = request_obj.FILES.get('resume')
+    print(resume_file)
     # Create JobApplication object
     job_application = JobApplication(
             user=request_obj.user,
@@ -65,12 +67,12 @@ def get_application_data(request_obj,id):
             resume = resume_file
         )
     job_application.save()
+    print(job_application)
     return job_application
 
 @login_required(login_url="core:login-page")
 def job_post(request,id):
     author = Author.objects.filter(pk=id).first()
-    print(author)
     if request.method == 'POST':
         form = JobPostForm(request.POST)
         if form.is_valid():
@@ -84,7 +86,8 @@ def job_post(request,id):
             job_post.location = location
             job_post.save()
             job_post.skills.set(skills)
-            return redirect('/')  # Replace with your redirect URL
+            messages.success(request,f'The job post was successfully created')
+            return redirect('jobmanager:posted-jobs',id=author.id)  
     form = JobPostForm()
     return render(request, 'jobmanager/create-jobpost.html', {'form': form})
 
@@ -128,7 +131,7 @@ def profile(request,id):
                 setattr(author, key, value)
             
             author.save()
-
+        messages.success(request,"your profile is updated")
         return redirect('jobmanager:profile-page', id=id)  
     
     return render(request,"jobmanager/profile.html",{'user':request.user,'author':author})
@@ -136,15 +139,15 @@ def profile(request,id):
 @login_required(login_url="core:login-page")
 def view_posted_jobs(request,id):
     author = Author.objects.get(id=id)
-    job_posts = author.jobpost_set.all()
+    job_posts = JobPost.objects.filter(author=author).order_by("-date")
     return render(request,"jobmanager/posted-jobs.html",{'posts':job_posts,'author':author})
 
 @login_required(login_url="core:login-page")
 def view_applications(request,id):
-    print(id)
     job_post = JobPost.objects.get(id=id)
     applications = JobApplication.objects.filter(job_post=job_post)
-    return render(request,"jobmanager/applications-list.html",{"applications":applications})
+    author = Author.objects.get(user=request.user)
+    return render(request,"jobmanager/applications-list.html",{"applications":applications,"author":author})
 
 @login_required(login_url="core:login-page")
 def application_detail(request,id):
@@ -152,7 +155,7 @@ def application_detail(request,id):
     skills = job_application.skills.all()
     return render(request,"jobmanager/application-detail.html",{'application':job_application,"skills":skills})
 
-
+@login_required(login_url="core:login-page")
 def author(request):
     is_author = Author.objects.filter(user=request.user).exists()
     if not is_author:
@@ -163,7 +166,20 @@ def author(request):
                 author = form.save(commit=False)
                 author.user = request.user
                 author.save()
+                messages.success(request,"You now have access to post a job")
                 return redirect("jobmanager:job-post",id=author.id)
         return render(request,"jobmanager/author.html",{'form':form})
     else:
         return redirect("/")
+    
+
+@login_required(login_url="core:login-page")
+def delete_job_post(request, id,jobpost_id):
+    job_post = get_object_or_404(JobPost,id=jobpost_id)
+    # Check if the logged-in user has permission to delete the job application
+    if request.user == job_post.author.user:
+        job_post.delete()
+        messages.success(request,"The job post was deleted")
+        # Optionally, redirect to a success URL or another appropriate page
+        return redirect('jobmanager:posted-jobs',id=id)
+    return HttpResponseForbidden("You do not have permission to delete this job application.")

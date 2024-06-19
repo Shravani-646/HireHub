@@ -44,7 +44,9 @@
         </div>
         </div>
         </div>
-        
+        {% for message in messages %}
+            <p class="text-success link-underline-success">{{message}}</p>
+        {% endfor %}
         <script src="" async defer></script>
     </body>
 </html>

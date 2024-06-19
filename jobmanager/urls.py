@@ -11,5 +11,6 @@ urlpatterns = [
     path("profiles/<int:id>/",views.profile,name="profile-page"),
     path("jobpost/<int:id>/applications",views.view_applications,name="applications-list"),
     path("applications/<int:id>/",views.application_detail,name="application-detail"),
-    path("authors/",views.author,name="author-page")
+    path("authors/",views.author,name="author-page"),
+    path('authors/<int:id>/jobpost/<int:jobpost_id>/', views.delete_job_post, name='delete-job-post'),
 ]
