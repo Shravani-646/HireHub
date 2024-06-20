@@ -28,13 +28,13 @@
                         <form method="post">
                             {% csrf_token %}
                         <div class="row mt-2">
-                            <div class="col-md-6"><label class="labels">Name</label>
+                            <div class="col-md-6"><label class="labels fs-6">Name</label>
                                 <input type="text" class="form-control" placeholder="Enter your firstname" value="{{user.first_name}} {{user.last_name}}" name="name" >
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-6"><label class="labels">Company</label>{{form.company}}</div>
-                            <div class="col-md-6"><label class="labels">Designation</label>{{form.designation}}</div>
+                            <div class="col-md-6"><label class="labels fs-6">Company</label>{{form.company}}</div>
+                            <div class="col-md-6"><label class="labels fs-6">Designation</label>{{form.designation}}</div>
                         </div>
                         <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="submit">Save Profile</button></div>
                     </form>

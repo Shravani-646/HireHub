@@ -5,6 +5,7 @@ from jobmanager.forms import AuthorForm, JobPostForm
 from jobmanager.models import JobPost,JobApplication,Skills,Author,Location
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
@@ -19,7 +20,25 @@ def home_page(request):
         if not jobs.exists():
             jobs = JobPost.objects.filter(title__icontains=keyword)
         return render(request, 'jobmanager/job-list.html', {'jobs': jobs, 'search_keyword': keyword, 'author': author})
+    #pagination logic
+    jobs = pagination_feature(queryset=jobs,request_obj=request)
     return render(request, 'jobmanager/job-list.html', {'jobs': jobs,'request':request,'author':author})
+
+def pagination_feature(queryset,request_obj):
+    paginator = Paginator(queryset,12)  # Show 10 items per page
+
+    page = request_obj.GET.get('page')
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        items = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g., 9999), deliver last page of results.
+        items = paginator.page(paginator.num_pages)
+    return items
+
+
 
 def job_list(request):
     if request.method == "GET":
@@ -69,6 +88,7 @@ def get_application_data(request_obj,id):
     job_application.save()
     print(job_application)
     return job_application
+
 
 @login_required(login_url="core:login-page")
 def job_post(request,id):

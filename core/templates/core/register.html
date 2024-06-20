@@ -25,10 +25,10 @@
                       Sign up
                     </p>
                     {% endblock %}
+                    {% block content %}
                     <form method="POST" class="mx-1 mx-md-4" action="">
                       {% csrf_token %}
                       <!-- div-1 username -->
-                      {% block content %}
                       <div class="d-flex flex-row align-items-center mb-4">
                         <div
                           data-mdb-input-init
@@ -125,8 +125,8 @@
                       <div class="form-check d-flex justify-content-center mb-5">
                         <label class="form-check-label" for="form2Example3">Already have an account?<a href="{% url "core:login-page" %}">Login</a></label>
                     </div>
-                      {% endblock%}
-                    </form>
+                  </form>
+                  {% endblock%}
                   </div>
                   <div
                     class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2"

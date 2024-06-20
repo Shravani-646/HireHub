@@ -21,7 +21,11 @@
         {% endfor %}
       </ul>
     </div>
-    <a type="submit" class="btn btn-primary m-3" href="{% url 'jobmanager:job-application' id=job.id %}">Apply</a>
+    {% if user.is_authenticated %}
+        <a class="btn btn-primary m-3" href="{% url 'jobmanager:job-application' id=job.id %}">Apply</a>
+    {% else %}
+        <a class="btn btn-primary m-3" href="{% url 'core:login-page' %}?next={% url 'jobmanager:job-application' id=job.id %}">Apply</a>
+    {% endif %}
   </div>
   
     {%endblock%}

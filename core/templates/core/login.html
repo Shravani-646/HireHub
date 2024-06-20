@@ -7,6 +7,9 @@
 {% endblock %} 
 
 {%block content%}
+<form method="POST" class="mx-1 mx-md-4" action="{% url 'core:login-page' %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
 <div class="d-flex flex-row align-items-center mb-4">
     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
     <div data-mdb-input-init class="form-outline flex-fill mb-0">
@@ -37,5 +40,6 @@
   <div class="form-check d-flex justify-content-center mb-5">
     <label class="form-check-label" for="form2Example3">Don't have an account?<a href="{% url "core:signup-page" %}">Signup</a></label>
 </div>
+</form>
 {% endblock %}
 

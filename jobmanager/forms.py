@@ -29,3 +29,8 @@ class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
         fields = ["name","company","designation"]
+
+        widgets = {
+            'company':forms.TextInput(attrs={'class':'form-control','placeholder':'Current Working Compnay'}),
+            'designation':forms.TextInput(attrs={'class':'form-control','placeholder':'Enter your designation'})
+        }

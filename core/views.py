@@ -21,16 +21,19 @@ def register_page(request):
 def login_page(request):
     if request.user.is_authenticated:
         return redirect("jobmanager:home-page")
+    
+    next_url = request.GET.get('next', request.POST.get('next', 'jobmanager:home-page'))
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request,username=username,password=password)
         if user is not None:
             login(request,user)
-            return redirect('jobmanager:home-page')
+            print(request.POST)
+            return redirect(next_url)
         else:
             messages.info(request,"Username or password is incorrect")
-    return render(request,template_name="core/login.html")
+    return render(request, "core/login.html", {'next': next_url})
 
 def logout_user(request):
     logout(request)
